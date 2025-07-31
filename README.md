@@ -166,3 +166,11 @@ ki2api/
 ## 许可证
 
 MIT License
+
+# Cherry Studio
+```
+提供商类型 : OPENAI
+API Key  : ki2api-key-2024
+API 地址  : http://127.0.0.1:8989
+模型      ： claude-sonnet-4-20250514
+```

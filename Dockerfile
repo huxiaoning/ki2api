@@ -31,4 +31,4 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8989/health || exit 1
 
 # Use entrypoint script for smart startup
-ENTRYPOINT ["./entrypoint.sh"]
+CMD ["sh", "-c", "python token_reader.py && python app.py"]
