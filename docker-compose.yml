@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  api-network:
+    driver: bridge
+
 services:
   ki2api:
     build: .
@@ -11,6 +15,8 @@ services:
       # 自动挂载token目录，实现零配置
       - ~/.aws/sso/cache:/root/.aws/sso/cache:ro
     restart: unless-stopped
+    networks:
+      - api-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8989/health"]
       interval: 30s
