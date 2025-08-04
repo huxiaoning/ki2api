@@ -389,102 +389,121 @@ def find_matching_bracket(text: str, start_pos: int) -> int:
     return -1
 
 def parse_single_tool_call_professional(tool_call_text: str) -> Optional[ToolCall]:
-    """专业的工具调用解析器 - 使用json_repair库"""
-    logger.info(f"🔧 开始解析工具调用文本 (长度: {len(tool_call_text)})")
-    
-    # 步骤1: 提取函数名
-    name_pattern = r'\[Called\s+(\w+)\s+with\s+args:'
-    name_match = re.search(name_pattern, tool_call_text, re.IGNORECASE)
-    
-    if not name_match:
-        logger.warning("⚠️ 无法从文本中提取函数名")
-        return None
-    
-    function_name = name_match.group(1).strip()
-    logger.info(f"✅ 提取到函数名: {function_name}")
-    
-    # 步骤2: 提取JSON参数部分
-    # 找到 "with args:" 之后的位置
-    args_start_marker = "with args:"
-    args_start_pos = tool_call_text.lower().find(args_start_marker.lower())
-    if args_start_pos == -1:
-        logger.error("❌ 找不到 'with args:' 标记")
-        return None
-    
-    # 从 "with args:" 后开始
-    args_start = args_start_pos + len(args_start_marker)
-    
-    # 找到最后的 ']'
-    args_end = tool_call_text.rfind(']')
-    if args_end <= args_start:
-        logger.error("❌ 找不到结束的 ']'")
-        return None
-    
-    # 提取可能包含JSON的部分
-    json_candidate = tool_call_text[args_start:args_end].strip()
-    logger.info(f"📝 提取的JSON候选文本长度: {len(json_candidate)}")
-    
-    # 步骤3: 修复并解析JSON
-    try:
-        # 使用json_repair修复可能损坏的JSON
-        repaired_json = repair_json(json_candidate)
-        logger.info(f"🔧 JSON修复完成，修复后长度: {len(repaired_json)}")
-        
-        # 解析修复后的JSON
-        arguments = json.loads(repaired_json)
-        
-        # 验证解析结果是字典
-        if not isinstance(arguments, dict):
-            logger.error(f"❌ 解析结果不是字典类型: {type(arguments)}")
-            return None
-        
-        # 创建工具调用对象
-        tool_call_id = f"call_{uuid.uuid4().hex[:8]}"
-        tool_call = ToolCall(
-            id=tool_call_id,
-            type="function",
-            function={
-                "name": function_name,
-                "arguments": json.dumps(arguments, ensure_ascii=False)
-            }
-        )
-        
-        logger.info(f"✅ 成功创建工具调用: {function_name} (参数键: {list(arguments.keys())})")
-        return tool_call
-        
-    except Exception as e:
-        logger.error(f"❌ JSON修复/解析失败: {type(e).__name__}: {str(e)}")
-        
-        # 备用方案：尝试更激进的修复
-        try:
-            # 查找第一个 { 和最后一个 }
-            first_brace = json_candidate.find('{')
-            last_brace = json_candidate.rfind('}')
-            
-            if first_brace != -1 and last_brace > first_brace:
-                core_json = json_candidate[first_brace:last_brace + 1]
-                
-                # 再次尝试修复
-                repaired_core = repair_json(core_json)
-                arguments = json.loads(repaired_core)
-                
-                if isinstance(arguments, dict):
-                    tool_call_id = f"call_{uuid.uuid4().hex[:8]}"
-                    tool_call = ToolCall(
-                        id=tool_call_id,
-                        type="function",
-                        function={
-                            "name": function_name,
-                            "arguments": json.dumps(arguments, ensure_ascii=False)
-                        }
-                    )
-                    logger.info(f"✅ 备用方案成功: {function_name}")
-                    return tool_call
-                    
-        except Exception as backup_error:
-            logger.error(f"❌ 备用方案也失败了: {backup_error}")
-        
-        return None
+      """专业的工具调用解析器 - 使用json_repair库"""
+      logger.info(f"🔧 开始解析工具调用文本 (长度: {len(tool_call_text)})")
+
+      # 步骤1: 提取函数名
+      name_pattern = r'\[Called\s+(\w+)\s+with\s+args:'
+      name_match = re.search(name_pattern, tool_call_text, re.IGNORECASE)
+
+      if not name_match:
+          logger.warning("⚠️ 无法从文本中提取函数名")
+          return None
+
+      function_name = name_match.group(1).strip()
+      logger.info(f"✅ 提取到函数名: {function_name}")
+
+      # 步骤2: 提取JSON参数部分
+      # 找到 "with args:" 之后的位置
+      args_start_marker = "with args:"
+      args_start_pos = tool_call_text.lower().find(args_start_marker.lower())
+      if args_start_pos == -1:
+          logger.error("❌ 找不到 'with args:' 标记")
+          return None
+
+      # 从 "with args:" 后开始
+      args_start = args_start_pos + len(args_start_marker)
+
+      # 找到最后的 ']'
+      args_end = tool_call_text.rfind(']')
+      if args_end <= args_start:
+          logger.error("❌ 找不到结束的 ']'")
+          return None
+
+      # 提取可能包含JSON的部分
+      json_candidate = tool_call_text[args_start:args_end].strip()
+      logger.info(f"📝 提取的JSON候选文本长度: {len(json_candidate)}")
+
+      # 步骤3: 修复并解析JSON
+      try:
+          # 使用json_repair修复可能损坏的JSON
+          repaired_json = repair_json(json_candidate)
+          logger.info(f"🔧 JSON修复完成，修复后长度: {len(repaired_json)}")
+
+          # 解析修复后的JSON
+          parsed_args = json.loads(repaired_json)
+          logger.info(f"✅ JSON解析成功，类型: {type(parsed_args)}")
+
+          # Handle both dictionary and list formats
+          if isinstance(parsed_args, dict):
+              # Original format: direct dictionary
+              arguments = parsed_args
+          elif isinstance(parsed_args, list) and len(parsed_args) > 0:
+              # New format: list with arguments as first element
+              if isinstance(parsed_args[0], dict):
+                  arguments = parsed_args[0]
+              else:
+                  logger.error(f"❌ 列表格式中第一个元素不是字典: {type(parsed_args[0])}")
+                  return None
+          else:
+              logger.error(f"❌ 解析结果格式不支持: {type(parsed_args)}")
+              return None
+
+          # 创建工具调用对象
+          tool_call_id = f"call_{uuid.uuid4().hex[:8]}"
+          tool_call = ToolCall(
+              id=tool_call_id,
+              type="function",
+              function={
+                  "name": function_name,
+                  "arguments": json.dumps(arguments, ensure_ascii=False)
+              }
+          )
+
+          logger.info(f"✅ 成功创建工具调用: {function_name} (参数键: {list(arguments.keys())})")
+          return tool_call
+
+      except Exception as e:
+          logger.error(f"❌ JSON修复/解析失败: {type(e).__name__}: {str(e)}")
+
+          # 备用方案：尝试更激进的修复
+          try:
+              # 查找第一个 { 和最后一个 }
+              first_brace = json_candidate.find('{')
+              last_brace = json_candidate.rfind('}')
+
+              if first_brace != -1 and last_brace > first_brace:
+                  core_json = json_candidate[first_brace:last_brace + 1]
+
+                  # 再次尝试修复
+                  repaired_core = repair_json(core_json)
+                  parsed_args = json.loads(repaired_core)
+
+                  # Handle both dictionary and list formats in backup method too
+                  if isinstance(parsed_args, dict):
+                      arguments = parsed_args
+                  elif isinstance(parsed_args, list) and len(parsed_args) > 0 and isinstance(parsed_args[0], dict):
+                      arguments = parsed_args[0]
+                  else:
+                      logger.error(f"❌ 备用方案解析结果格式不支持: {type(parsed_args)}")
+                      return None
+
+                  tool_call_id = f"call_{uuid.uuid4().hex[:8]}"
+                  tool_call = ToolCall(
+                      id=tool_call_id,
+                      type="function",
+                      function={
+                          "name": function_name,
+                          "arguments": json.dumps(arguments, ensure_ascii=False)
+                      }
+                  )
+                  logger.info(f"✅ 备用方案成功: {function_name}")
+                  return tool_call
+
+          except Exception as backup_error:
+              logger.error(f"❌ 备用方案也失败了: {backup_error}")
+
+          return None
 
 def parse_bracket_tool_calls_professional(response_text: str) -> Optional[List[ToolCall]]:
     """专业的批量工具调用解析器"""
