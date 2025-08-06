@@ -174,3 +174,25 @@ API Key  : ki2api-key-2024
 API 地址  : http://127.0.0.1:8989
 模型      ： claude-sonnet-4-20250514
 ```
+
+# Claude Code Router
+
+```
+>　idea $HOME/.claude-code-router/config.json
+
+{
+  "Providers": [
+    {
+      "name": "kiro",
+      "api_base_url": "http://127.0.0.1:8989/v1/chat/completions",
+      "api_key": "ki2api-key-2024",
+      "models": [
+        "claude-sonnet-4-20250514"
+      ]
+    }
+  ],
+  "Router": {
+    "default": "kiro"
+  }
+}
+```
