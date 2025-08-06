@@ -102,7 +102,7 @@ class Tool(BaseModel):
 
 
 class ChatCompletionRequest(BaseModel):
-    model: str
+    model: Optional[str] = DEFAULT_MODEL
     messages: List[ChatMessage]
     temperature: Optional[float] = 0.7
     max_tokens: Optional[int] = 4000
