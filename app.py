@@ -41,10 +41,10 @@ PROFILE_ARN = "arn:aws:codewhisperer:us-east-1:699475941385:profile/EHGA3GRVQMUK
 
 # Model mapping
 MODEL_MAP = {
-    "claude-sonnet-4-20250514": "CLAUDE_SONNET_4_20250514_V1_0",
-    "claude-3-5-haiku-20241022": "CLAUDE_3_7_SONNET_20250219_V1_0",
+    "claude-sonnet-4-5-20250929": "CLAUDE_SONNET_4_5_20250929_V1_0",
+    "claude-3-5-haiku-20241022":  "auto",
 }
-DEFAULT_MODEL = "claude-sonnet-4-20250514"
+DEFAULT_MODEL = "claude-sonnet-4-5-20250929"
 
 # Pydantic models for OpenAI compatibility
 class ImageUrl(BaseModel):

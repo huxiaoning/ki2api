@@ -39,7 +39,7 @@ Required environment variables:
 
 ```bash
 curl -X POST https://your-space-url/v1/chat/completions \n  -H "Authorization: Bearer ki2api-key-2024" \n  -H "Content-Type: application/json" \n  -d '{
-    "model": "claude-sonnet-4-20250514",
+    "model": "claude-sonnet-4-5-20250929",
     "messages": [
       {"role": "user", "content": "Hello!"}
     ]
@@ -48,7 +48,7 @@ curl -X POST https://your-space-url/v1/chat/completions \n  -H "Authorization: B
 
 ## Supported Models
 
-- `claude-sonnet-4-20250514` - Claude Sonnet 4 (Latest)
+- `claude-sonnet-4-5-20250929` - Claude Sonnet 4 (Latest)
 - `claude-3-5-haiku-20241022` - Claude 3.5 Haiku
 
 Built with FastAPI and optimized for Hugging Face Spaces deployment.
