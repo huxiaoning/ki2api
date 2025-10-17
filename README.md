@@ -195,4 +195,12 @@ API 地址  : http://127.0.0.1:8989
     "default": "kiro"
   }
 }
+
+>　idea $HOME/.claude/settings.json
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "anything",
+    "ANTHROPIC_BASE_URL": "http://127.0.0.1:3456"
+  }
+}
 ```
