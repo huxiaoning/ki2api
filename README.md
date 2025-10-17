@@ -1,12 +1,12 @@
 # Ki2API - Claude Sonnet 4 OpenAI兼容API
 
-一个简单易用的Docker化OpenAI兼容API服务，专门用于Claude Sonnet 4模型。
+一个简单易用的Docker化OpenAI兼容API服务，专门用于Claude Sonnet 4.5模型。
 
 ## 功能特点
 
 - 🐳 **Docker傻瓜式运行** - 一行命令启动服务
 - 🔑 **固定API密钥** - 使用 `ki2api-key-2024`
-- 🎯 **单一模型** - 仅支持 `claude-sonnet-4-20250514`
+- 🎯 **单一模型** - 仅支持 `claude-sonnet-4-5-20250929`
 - 🌐 **OpenAI兼容** - 完全兼容OpenAI API格式
 - 📡 **流式传输** - 支持SSE流式响应
 - 🔄 **自动token刷新** - 支持token过期自动刷新
@@ -43,7 +43,7 @@ curl -X POST http://localhost:8989/v1/chat/completions \
   -H "Authorization: Bearer ki2api-key-2024" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "claude-sonnet-4-20250514",
+    "model": "claude-sonnet-4-5-20250929",
     "messages": [
       {"role": "user", "content": "你好，请介绍一下自己"}
     ],
@@ -57,7 +57,7 @@ curl -X POST http://localhost:8989/v1/chat/completions \
   -H "Authorization: Bearer ki2api-key-2024" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "claude-sonnet-4-20250514",
+    "model": "claude-sonnet-4-5-20250929",
     "messages": [
       {"role": "user", "content": "写一首关于春天的诗"}
     ],
