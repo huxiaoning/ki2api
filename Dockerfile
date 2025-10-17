@@ -8,7 +8,11 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+# Set pip index URL
+RUN pip config set global.index-url https://pypi.org/simple
+
+# Upgrade pip and clear cache
+RUN pip install --upgrade pip && pip cache purge
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
@@ -27,7 +31,7 @@ RUN mkdir -p /root/.aws/sso/cache
 EXPOSE 8989
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=60s --timeout=30s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8989/health || exit 1
 
 # Use entrypoint script for smart startup
