@@ -172,7 +172,7 @@ MIT License
 提供商类型 : OPENAI
 API Key  : ki2api-key-2024
 API 地址  : http://127.0.0.1:8989
-模型      ： claude-sonnet-4-20250514
+模型      ： claude-3-5-haiku-20241022 \ claude-sonnet-4-5-20250929
 ```
 
 # Claude Code Router
