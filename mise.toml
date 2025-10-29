@@ -1,0 +1,15 @@
+
+
+[tasks.clean]
+description = 'docker-compose down --rmi all'
+run = "docker-compose down --rmi all"
+
+
+[tasks.down]
+description = 'docker-compose down'
+run = "docker-compose down"
+
+
+[tasks.up]
+description = 'docker compose up -d'
+run = "docker compose up -d"
